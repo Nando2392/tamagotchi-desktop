@@ -267,18 +267,14 @@ class TamagotchiApp:
             sx, sy = 205, 150
             vx_rng, vy_rng = (0, 6), (22, 34)
             grav = 1
-        elif kind in ("heart", "sparkle"):
+        elif kind in ("heart", "sparkle", "bubble"):
             sx, sy = 185, 252
             vx_rng, vy_rng = (4, 10), (16, 30)
-            grav = -1
-        elif kind == "bubble":
-            sx, sy = 185, 252
-            vx_rng, vy_rng = (6, 14), (12, 24)
-            grav = -1
+            grav = -0.35
         elif kind == "zzz":
             sx, sy = 222, 205
             vx_rng, vy_rng = (3, 7), (10, 18)
-            grav = -1
+            grav = -0.35
         else:  # poo, sweat, etc: desde el cuerpo hacia fuera
             sx, sy = 190, 245
             vx_rng, vy_rng = (6, 14), (14, 30)
@@ -440,7 +436,7 @@ class TamagotchiApp:
         if pet.sleeping and random.random() < dt * 0.8:
             self.particles.append({
                 "kind": "zzz", "x": 218 + random.randint(0, 16),
-                "y": 200, "vx": 6, "vy": -16, "t": 0.0, "life": 1.6, "grav": -1})
+                "y": 200, "vx": 6, "vy": -16, "t": 0.0, "life": 1.6, "grav": -0.35})
         # bañándose: lluvia de gotas dentro de la mampara
         if self.state == "bathing" and random.random() < dt * 14:
             self.particles.append({
@@ -548,10 +544,16 @@ class TamagotchiApp:
                 fy = 150 + int(t * (by - 160))
                 frame.paste(food, (fx - 13, fy - 13), food)
 
-        # partículas
+        # partículas (recortadas al área del LCD: nunca se salen de la pantalla)
+        LCD = art.SCREEN  # (48, 68, 332, 352) área interior de la pantalla
         for p in self.particles:
             img = art.render_particle(p["kind"], int(p["t"] * 12))
-            frame.paste(img, (int(p["x"]) - 13, int(p["y"]) - 13), img)
+            lx, ly = int(p["x"]) - 13, int(p["y"]) - 13
+            ix0, iy0 = max(lx, LCD[0]), max(ly, LCD[1])
+            ix1, iy1 = min(lx + img.width, LCD[2]), min(ly + img.height, LCD[3])
+            if ix1 > ix0 and iy1 > iy0:
+                crop = img.crop((ix0 - lx, iy0 - ly, ix1 - lx, iy1 - ly))
+                frame.paste(crop, (ix0, iy0), crop)
 
         # textos
         if pet.alive:

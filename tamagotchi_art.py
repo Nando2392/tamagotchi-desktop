@@ -12,10 +12,10 @@ STATUS_POS = (58, 84)                # fila de barras de estado
 PET_ANCHOR = (190, 232)              # centro del sprite
 PET_BOTTOM = 308                     # línea de apoyo (pies/huevo)
 BUTTONS = {                          # nombre -> (x, y, radio)
-    "feed": (120, 428, 25),
-    "play": (190, 428, 25),
-    "bathe": (260, 428, 25),
-    "sleep": (318, 428, 14),
+    "feed": (94, 410, 25),
+    "play": (158, 410, 25),
+    "bathe": (222, 410, 25),
+    "sleep": (286, 410, 14),
 }
 CLOSE_RECT = (238, 14, 268, 40)
 POOP_SLOTS = [(74, 302), (98, 308), (86, 320)]
