@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# PyInstaller
+build/
+dist/
+
+# Datos de test / capturas de desarrollo
+_testdata/
+captura_exe.png
+preview_*.png
+d_*.png
+v_*.png
