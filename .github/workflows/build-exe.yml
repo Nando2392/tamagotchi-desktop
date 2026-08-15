@@ -1,0 +1,35 @@
+name: build-exe
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install pyinstaller pillow
+
+      - name: Compilar .exe
+        run: pyinstaller --noconfirm --clean TamagotchiDesktop.spec
+
+      - name: Crear Release (solo con tag v*)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/TamagotchiDesktop.exe
+          generate_release_notes: true
+
+      - name: Subir artefacto (siempre)
+        uses: actions/upload-artifact@v4
+        with:
+          name: TamagotchiDesktop-exe
+          path: dist/TamagotchiDesktop.exe

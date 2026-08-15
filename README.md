@@ -4,6 +4,15 @@ Tamagotchi virtual con mascota dinosaurio estilo **Agumon**, dibujada 100% con
 PIL (sin assets externos), dentro de un aparato estilo Digivice en una ventana
 sin bordes y transparente.
 
+## ⬇️ Descargar y ejecutar (sin instalar nada)
+
+**[Descarga el .exe desde Releases](https://github.com/Nando2392/tamagotchi-desktop/releases/latest)**
+y haz doble clic. Funciona en Windows 10/11 sin Python ni dependencias.
+
+> El .exe se compila automáticamente con GitHub Actions al publicar una versión
+> (tag `v*`); también puedes lanzar el build a mano desde la pestaña Actions →
+> *build-exe* → *Run workflow*.
+
 ## Características
 
 - **Evolución**: huevo → bebé → niño → adolescente → adulto
