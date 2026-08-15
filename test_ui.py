@@ -74,16 +74,18 @@ check("dormir activa", app.pet.sleeping)
 click(app, *art.BUTTONS["sleep"][:2], root)
 check("dormir desactiva", not app.pet.sleeping)
 
-# 5. enferma -> el botón de jugar debe rechazarse y sugerir medicina
-#    (el loop de animación puede dispararse durante root.update() y decaer
-#     stats ligeramente, así que comparamos contra un margen amplio)
+# 5. enferma -> el botón de jugar (B) se convierte en MEDICINA y la cura
 app.pet.sick = True
-hap_sick0 = app.pet.happiness
+app.pet.sick_timer = 5.0
 click(app, *art.BUTTONS["play"][:2], root)
-check("jugar rechazado si enferma (sin +28 felicidad)",
-      app.pet.happiness < hap_sick0 + 10)
-check("aviso de enfermedad visible",
-      app.msg == MSGS_UI["sick"] or "enferma" in app.msg)
+check("medicina cura a la enferma", not app.pet.sick)
+check("animación healing", app.state == "healing")
+check("aviso de curada visible",
+      app.msg == MSGS_UI["cured"] or "Curada" in app.msg)
+# dar medicina a una sana no hace nada (no truena)
+app.pet.sick = False
+click(app, *art.BUTTONS["play"][:2], root)
+check("jugar normal si está sana", app.state == "playing")
 
 # 6. caca: limpiar clickeando encima de la caca
 app.pet.poop = 1

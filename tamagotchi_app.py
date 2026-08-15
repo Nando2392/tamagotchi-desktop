@@ -28,6 +28,7 @@ MSGS = {
     "egg": "El huevo tiembla… ¡toca un botón!",
     "tired": "¡Está agotada, no puede jugar!",
     "sick": "¡Está enferma! Dale medicina (B)",
+    "cured": "¡Curada! 💊",
     "not_sick": "Está sana, no necesita medicina",
     "no_poop": "No hay nada que limpiar",
     "evolve": "¡Evolucionó!",
@@ -216,15 +217,28 @@ class TamagotchiApp:
                 self._sound("feed")
                 # la comida cae a la boca y mastica (se anima en _compose)
         elif btn == "play":
-            ok, why = pet.play()
-            if ok:
-                self.state = "playing"
-                self.state_t = 0.0
-                self._sound("play")
-                self._burst("heart", 4, pet)
+            if pet.alive and pet.sick:
+                # botón Jugar se convierte en Medicina cuando está enferma
+                ok, why = pet.medicate()
+                if ok:
+                    self.state = "healing"
+                    self.state_t = 0.0
+                    self._sound("cure")
+                    self._burst("sparkle", 8, pet)
+                    self._flash(MSGS["cured"])
+                else:
+                    self._sound("error")
+                    self._flash(MSGS.get(why, ""))
             else:
-                self._sound("error")
-                self._flash(MSGS.get(why, ""))
+                ok, why = pet.play()
+                if ok:
+                    self.state = "playing"
+                    self.state_t = 0.0
+                    self._sound("play")
+                    self._burst("heart", 4, pet)
+                else:
+                    self._sound("error")
+                    self._flash(MSGS.get(why, ""))
         elif btn == "bathe":
             ok, _ = pet.bathe()
             if ok:
@@ -326,6 +340,7 @@ class TamagotchiApp:
             "hatch": ((660, 90), (880, 90), (1100, 180)),
             "evolve": ((523, 110), (659, 110), (784, 220)),
             "sick": ((220, 220),),
+            "cure": ((660, 80), (880, 80), (1100, 120)),
             "death": ((392, 260), (262, 420)),
         }.get(kind, ())
         for f, m in s:
@@ -444,7 +459,7 @@ class TamagotchiApp:
                 self.blinking = False
                 self.blink_t = random.uniform(2.5, 4.5)
         # fin de animaciones de acción
-        if self.state in ("eating", "playing", "bathing", "hatching"):
+        if self.state in ("eating", "playing", "bathing", "hatching", "healing"):
             if self.state_t > 2.6:
                 was_bathing = self.state == "bathing"
                 self.state = "idle"
@@ -475,7 +490,7 @@ class TamagotchiApp:
             return "sleep"
         if self.state == "eating":
             return "eat"
-        if self.state in ("playing", "bathing"):
+        if self.state in ("playing", "bathing", "healing"):
             return "happy"
         return "blink" if self.blinking else "idle"
 
